@@ -65,7 +65,6 @@ func consume(ctx context.Context) {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{addr},
 		Topic:   topic,
-		GroupID: "consumer",
 		Logger:  l,
 	})
 
