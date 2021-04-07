@@ -20,9 +20,11 @@ type PassData struct {
 }
 
 const (
-	topic         = "to-motechat"
-	brokerAddress = "localhost:9092"
+	topic          = "to-motechat"
+	defaultAddress = "localhost:9092"
 )
+
+var brokerAddress = os.Getenv("BROKER_ADDRESS")
 
 func main() {
 	ctx := context.Background()
@@ -53,10 +55,14 @@ func sendToHook(p PassData) {
 }
 
 func consume(ctx context.Context) {
+	addr := brokerAddress
+	if addr == "" {
+		addr = defaultAddress
+	}
 
 	l := log.New(os.Stdout, "kafka reader: ", 0)
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{brokerAddress},
+		Brokers: []string{addr},
 		Topic:   topic,
 		GroupID: "consumer",
 		Logger:  l,
