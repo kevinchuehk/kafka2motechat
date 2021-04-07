@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -59,7 +60,7 @@ func consume(ctx context.Context) {
 	if addr == "" {
 		addr = defaultAddress
 	}
-
+	fmt.Printf("BROKER_ADDRESS: %s\n", addr)
 	l := log.New(os.Stdout, "kafka reader: ", 0)
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{addr},
