@@ -9,7 +9,6 @@ import (
 	"net/http"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/segmentio/kafka-go"
 )
@@ -38,7 +37,7 @@ func sendToHook(p *PassData) {
 	}
 
 	client := &http.Client{
-		Timeout:   15 * time.Second,
+		Timeout:   0,
 		Transport: tr,
 	}
 
