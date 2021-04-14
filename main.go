@@ -32,7 +32,7 @@ func main() {
 	consume(ctx)
 }
 
-func sendToHook(p PassData) {
+func sendToHook(p *PassData) {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -80,6 +80,6 @@ func consume(ctx context.Context) {
 			panic("could not parse message " + err.Error())
 		}
 
-		sendToHook(passdata)
+		sendToHook(&passdata)
 	}
 }
