@@ -8,8 +8,8 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 
+	"github.com/go-resty/resty/v2"
 	"github.com/segmentio/kafka-go"
 )
 
@@ -17,6 +17,10 @@ type PassData struct {
 	Topic string `json:"topic"`
 	Name  string `json:"name"`
 	Data  string `json:"data"`
+}
+
+type AuthSuccess struct {
+	/* variables */
 }
 
 const (
@@ -35,23 +39,17 @@ func sendToHook(p *PassData) {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
-
-	client := &http.Client{
-		Timeout:   0,
-		Transport: tr,
-	}
-
-	resp, err := client.Post(
-		`https://webhook.ypcloud.com/`+p.Name+`/`+p.Topic,
-		`application/json`,
-		strings.NewReader(p.Data),
-	)
+	client := resty.New()
+	client.SetTransport(tr)
+	_, err := client.R().
+		SetHeader("Content-Type", "application/json").
+		SetBody(p.Data).
+		SetResult(AuthSuccess{}).
+		Post(`https://webhook.ypcloud.com/` + p.Name + `/` + p.Topic)
 
 	if err != nil {
 		log.Printf("Request Error: %s\n", err)
 	}
-	defer resp.Body.Close()
-	log.Println("Request success")
 }
 
 func consume(ctx context.Context) {
